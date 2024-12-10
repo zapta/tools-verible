@@ -1,0 +1,8 @@
+{
+  "name":"tools-verible",
+  "description":"verible tools",
+  "url":"https://github.com/FPGAwars/tools-verible/releases",
+  "version": %VERSION%,
+  "upstream-version": %UPSTREAM_VERSION%,
+  "system": [ %SYSTEM% ]
+}
