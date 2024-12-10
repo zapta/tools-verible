@@ -10,21 +10,21 @@ VERSION="0.0.1"
 # -- See list at https://github.com/chipsalliance/verible/releases
 VERSION_SRC="v0.0-3862-g936dfb1d"
 
-## For debugging, echo executed commands.
-# set -x
+# -- For debugging, echo executed commands.
+#set -x
 
-# Exit on any error
+# -- Exit on any error
 set -e
 
-# Set english language for propper pattern matching
+# -- Set english language for propper pattern matching
 export LC_ALL=C
 
 # -- The name of the generated apio package.
 #NAME=verible
 
-#-- This version is stored in a temporal file so that
-#-- github actions can read it and figure out the package
-#-- name for upload it to the new release
+# -- This version is stored in a temporal file so that
+# -- github actions can read it and figure out the package
+# -- name for upload it to the new release
 echo "$VERSION" > "VERSION_BUILD"
 
 # -- Base URL for oss-cad-suite package
@@ -118,22 +118,27 @@ echo ""
 if [ "${ARCH}" == "linux_x86_64" ]; then
    ARCH_SRC="linux-static-x86_64"
    EXT_SRC="tar.gz"
+   TOP_DIR_SRC="verible-${VERSION_SRC}"
 
 elif [ "${ARCH}" == "linux_aarch64" ]; then
    ARCH_SRC="linux-static-arm64"
    EXT_SRC="tar.gz"
+   TOP_DIR_SRC="verible-${VERSION_SRC}"
 
 elif [ "${ARCH}" == "windows_amd64" ]; then
    ARCH_SRC="win64"
    EXT_SRC="zip"
+   TOP_DIR_SRC="verible-${VERSION_SRC}-${ARCH_SRC}"
 
 elif [ "${ARCH}" == "darwin" ]; then
    ARCH_SRC="macOS"
    EXT_SRC="tar.gz"
+   TOP_DIR_SRC="verible-${VERSION_SRC}-${ARCH_SRC}"
 
 elif [ "${ARCH}" == "darwin_arm64" ]; then
    ARCH_SRC="macOS"
    EXT_SRC="tar.gz"
+   TOP_DIR_SRC="verible-${VERSION_SRC}-${ARCH_SRC}"
 
 else
   echo ""
@@ -141,11 +146,8 @@ else
   print_help_exit
 fi
 
-# -- The base name of the upstream file.
-BASENAME_SRC="verible-${VERSION_SRC}-${ARCH_SRC}"
-
 # -- The name of the upstream file, with extension.
-FILENAME_SRC="${BASENAME_SRC}.${EXT_SRC}"
+FILENAME_SRC="verible-${VERSION_SRC}-${ARCH_SRC}.${EXT_SRC}"
 
 echo "* Upstream package name:"
 echo "  $FILENAME_SRC"
@@ -188,23 +190,27 @@ fi
 #rm -f $FILENAME_SRC
 
 # -- Construct the target file name.
-PACKAGE_NAME=tools-verible-$ARCH-$VERSION
-PACKAGE_FILE_NAME="${PACKAGE_NAME}.tar.gz"
+#PACKAGE_NAME=tools-verible-$ARCH-$VERSION
+PACKAGE_FILE_NAME="tools-verible-${ARCH}-${VERSION}.tar.gz"
 
 # Make the package dir.
-mkdir -p ${PACKAGE_DIR}/${PACKAGE_NAME}
 
 # Copy files from upstream to package.
-cp -r ${UPSTREAM_DIR}/* ${PACKAGE_DIR}/${PACKAGE_NAME}
+echo $UPSTREAM_DIR
 
-# -- Go to the source Create the folders of the target package
-#SOURCE_DIR=$UPSTREAM_DIR/$BASENAME_SRC
-#cd $SOURCE_DIR 
+if [ "${ARCH}" == "windows_amd64" ]; then
+  # -- The upstream windows package is lacking the 'bin' directory.
+  mkdir -p ${PACKAGE_DIR}/content/bin
+  cp -r ${UPSTREAM_DIR}/${TOP_DIR_SRC}/* ${PACKAGE_DIR}/content/bin
+else
+  mkdir -p ${PACKAGE_DIR}/content
+  cp -r ${UPSTREAM_DIR}/${TOP_DIR_SRC}/* ${PACKAGE_DIR}/content
+fi
 
 # -- Copy templates/package-template.json and fill-in version and arch.
 # -- Using in-place flag with an actual ".bak" suffix for OSX compatibilty.
 echo "---> Setting target package metadata."
-PACKAGE_JSON=$PACKAGE_DIR/$PACKAGE_NAME/package.json
+PACKAGE_JSON=$PACKAGE_DIR/content/package.json
 cp -r "$WORK_DIR"/build-data/package-template.json $PACKAGE_JSON
 sed -i.bak "s/%VERSION%/\"$VERSION\"/;" $PACKAGE_JSON
 sed -i.bak "s/%SYSTEM%/\"$ARCH\"/;" $PACKAGE_JSON
@@ -213,14 +219,15 @@ rm ${PACKAGE_JSON}.bak
 
 
 # -- Copy the license file.
-cp $WORK_DIR/build-data/verible-license.txt $PACKAGE_DIR/$PACKAGE_NAME/LICENSE.txt
-
+cp $WORK_DIR/build-data/verible-license.txt $PACKAGE_DIR/content/LICENSE.txt
 
 # -- Compress the package dir.
 echo ""
 echo "---> Compressing the target package."
-cd ${PACKAGE_DIR}/${PACKAGE_NAME}
-tar zcf ../../${PACKAGE_FILE_NAME} ./* 
+cd ${PACKAGE_DIR}/content
+echo $PWD
+tar zcf ../../${PACKAGE_FILE_NAME} * 
+
 
 # -- All done.
 echo ""
