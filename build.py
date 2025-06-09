@@ -26,23 +26,18 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-
 # -- Set the version of the upstream release.
 # -- See list at https://github.com/chipsalliance/verible/releases
 VERIBLE_TAG = "v0.0-3862-g936dfb1d"
 
-# -- Base URL for oss-cad-suite package
-# SRC_URL_BASE="https://github.com/chipsalliance/verible/releases/download"
 
-
-def run(cmd_args: List[str]) -> None:
-    """Run a command and check that it succeeded."""
+def run(cmd_args: Union[List[str], str], shell: bool = False) -> None:
+    """Run a command and check that it succeeded. Select shell=true to enable
+    shell features such as '*' glob."""
     print(f"\nRun: {cmd_args}")
-    subprocess.run(cmd_args, check=True)
+    print(f"{shell=}")
+    subprocess.run(cmd_args, check=True, shell=shell)
     print("Run done\n")
-
-
-
 
 
 @dataclass(frozen=True)
@@ -54,7 +49,6 @@ class PlatformInfo:
     # The name of the wrapper dir when uncompressing Verible package.
     verible_wrapper_dir: str
     unarchive_cmd: str
-
 
 
 # -- Maps apio platform codes to their attributes.
@@ -100,7 +94,6 @@ def main():
     # -- Print build parameters
     print("Apio oss-cad-suite builder")
 
-
     print("\nPARAMS:")
     print(f"  Platform ID:       {args.platform_id}")
     print(f"  Verible tag:       {VERIBLE_TAG}")
@@ -114,7 +107,6 @@ def main():
     # -- Determine if processing the windows package.
     is_windows = "windows" in args.platform_id
     print(f"\n{is_windows=}")
-
 
     # -- Save the start dir. It is assume to be at top of this repo.
     work_dir: Path = Path.cwd()
@@ -143,7 +135,7 @@ def main():
         args.platform_id,
         "-",
         args.package_tag,
-        ".zip",
+        ".tar.gz",
     ]
     package_filename = "".join(parts)
     print(f"\n{package_filename=}")
@@ -194,13 +186,12 @@ def main():
     else:
         assert (verible_root / "bin").is_dir()
 
-
     # -- Copy the package files to the output directory.
     # -- We use rsync to copy all, including sim links, if any.
     # -- The does "/" matters.
     print("\nCopying package files.")
     # -- For windows, inset the missing 'bin' dir.
-    dst = package_dir / "bin" if  is_windows else package_dir
+    dst = package_dir / "bin" if is_windows else package_dir
     run(["rsync", "-aq", f"{verible_root}/", f"{dst}/"])
 
     # -- Delete the upstream dir
@@ -216,13 +207,17 @@ def main():
     run(["ls", "-al", package_dir])
     run(["cat", "-n", package_build_info])
 
-    # -- Zip the package. We run zip in a shell for the '*' glob to expand.
+    # print("Compressing the  package.")
+    # os.chdir(package_dir)
+    # print(f"{Path.cwd()=}")
+    # # -- The flag 'q' is for 'quiet'.
+    # zip_cmd = f"zip -qr ../{package_filename} *"
+    # subprocess.run(zip_cmd, shell=True, check=True)
+
+    # -- Compress the package. We run in a shell for the '*' glob to expand.
     print("Compressing the  package.")
     os.chdir(package_dir)
-    print(f"{Path.cwd()=}")
-    # -- The flag 'q' is for 'quiet'.
-    zip_cmd = f"zip -qr ../{package_filename} *"
-    subprocess.run(zip_cmd, shell=True, check=True)
+    run(f"tar zcf ../{package_filename} ./*", shell=True)
 
     # -- Delete the package dir
     print(f"\nDeleting package dir {package_dir}")

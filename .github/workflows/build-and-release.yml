@@ -36,17 +36,13 @@ jobs:
           echo $release_tag
           echo "RELEASE_TAG=$release_tag" >> $GITHUB_ENV
 
+
       # E.g. "20251102"
       - name: Determine package tag
         run: |
           package_tag="${RELEASE_TAG//-/}"
           echo $package_tag
           echo "PACKAGE_TAG=$package_tag" >> $GITHUB_ENV
-
-      # Required by the build script to extracting windows .exe.
-      # - name: Install p7zip (7z command)
-      #   run: |
-      #     sudo apt-get update && sudo apt-get install -y p7zip-full
 
 
       # Check out the this repo in the workflow work directory.
@@ -142,11 +138,13 @@ jobs:
           tag_name: ${{env.RELEASE_TAG}}
           name: ${{env.RELEASE_TAG}}
           body_path: RELEASE_BODY.txt
+          preserve_order: true
+          fail_on_unmatched_files: true
           files: |
-            _packages/apio-verible-darwin-arm64-${{env.PACKAGE_TAG}}.zip
-            _packages/apio-verible-darwin-x86-64-${{env.PACKAGE_TAG}}.zip
-            _packages/apio-verible-linux-x86-64-${{env.PACKAGE_TAG}}.zip
-            _packages/apio-verible-linux-aarch64-${{env.PACKAGE_TAG}}.zip
-            _packages/apio-verible-windows-amd64-${{env.PACKAGE_TAG}}.zip
+            _packages/apio-verible-darwin-arm64-${{env.PACKAGE_TAG}}.tar.gz
+            _packages/apio-verible-darwin-x86-64-${{env.PACKAGE_TAG}}.tar.gz
+            _packages/apio-verible-linux-x86-64-${{env.PACKAGE_TAG}}.tar.gz
+            _packages/apio-verible-linux-aarch64-${{env.PACKAGE_TAG}}.tar.gz
+            _packages/apio-verible-windows-amd64-${{env.PACKAGE_TAG}}.tar.gz
 
 
