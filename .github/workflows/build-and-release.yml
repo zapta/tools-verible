@@ -131,9 +131,8 @@ jobs:
           cat -n $out
 
 
-      # TODO: How to make this fail if any of the files is not uploaded.
       - name: Create the Release and upload files
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.2.2
         with:
           tag_name: ${{env.RELEASE_TAG}}
           name: ${{env.RELEASE_TAG}}
