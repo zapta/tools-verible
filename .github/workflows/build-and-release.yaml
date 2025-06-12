@@ -55,13 +55,11 @@ jobs:
 
       - name: Create the build-info.json file
         run: |
-          # "target-platform" is filled in build.py
           cat > build-info.json <<EOF
           {
             "name":  "verible",
             "description" : "Verible tools for Apio",
             "release-tag":  "$RELEASE_TAG",
-            "target-platform": "",
             "verible-release-tag": "$VERIBLE_RELEASE_TAG",
             "build-repo":  "${{github.repository}}",
             "build-workflow":  "${{ github.workflow }}",
