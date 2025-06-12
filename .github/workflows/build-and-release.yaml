@@ -57,7 +57,7 @@ jobs:
         run: |
           cat > build-info.json <<EOF
           {
-            "name":  "verible",
+            "package-name":  "verible",
             "description" : "Verible tools for Apio",
             "release-tag":  "$RELEASE_TAG",
             "verible-release-tag": "$VERIBLE_RELEASE_TAG",
