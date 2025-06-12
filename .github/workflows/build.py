@@ -52,8 +52,6 @@ class PlatformInfo:
 
 def get_platform_info(platform_id: str, verible_release_tag: str) -> PlatformInfo:
     """Extract (platform_id, platform_info)"""
-
-    # platform_id = build_info["target-platform"]
     platforms = {
         "darwin-arm64": PlatformInfo(
             f"verible-{verible_release_tag}-macOS",
@@ -147,6 +145,7 @@ def main():
     ]
     package_filename = "".join(parts)
     print(f"\n{package_filename=}")
+    build_info["target-platform"] = platform_id
     build_info["file-name"] = package_filename
 
     # Construct verible file name
@@ -213,13 +212,11 @@ def main():
     with output_json_file.open("w", encoding="utf-8") as f:
         json.dump(build_info, f, indent=2)
         f.write("\n")  # Ensure the file ends with a newline
-    run(["ls", "-al", package_dir])
     run(["cat", "-n", output_json_file])
 
     # Format the json file in the package dir
     print("Formatting package build info.")
     run(["json-align", "--in-place", "--spaces", "2", output_json_file])
-    run(["ls", "-al", package_dir])
     run(["cat", "-n", output_json_file])
 
     # -- Compress the package. We run in a shell for the '*' glob to expand.
