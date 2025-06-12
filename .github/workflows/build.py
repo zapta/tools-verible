@@ -216,6 +216,12 @@ def main():
     run(["ls", "-al", package_dir])
     run(["cat", "-n", output_json_file])
 
+    # Format the json file in the package dir
+    print("Formatting package build info.")
+    run(["json-align", "--in-place", "--spaces", "2", output_json_file])
+    run(["ls", "-al", package_dir])
+    run(["cat", "-n", output_json_file])
+
     # -- Compress the package. We run in a shell for the '*' glob to expand.
     print("Compressing the  package.")
     os.chdir(package_dir)
