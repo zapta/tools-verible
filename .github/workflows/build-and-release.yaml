@@ -47,6 +47,13 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4
 
+      - name: Install anti virus (ClamAV)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clamav clamav-daemon
+          sudo systemctl stop clamav-freshclam || true
+          sudo freshclam --verbose
+
       - name: Determine last commit
         run: |
           commit=$(git rev-parse HEAD)
@@ -135,6 +142,12 @@ jobs:
         run: |
           git tag -f ${{env.RELEASE_TAG}}
           git push origin -f ${{env.RELEASE_TAG}}
+
+      # Scans recursively inside the .tgz packages.
+      # See https://linux.die.net/man/1/clamscan
+      - name: Scan the packages for viruses
+        run: |
+          clamscan -r --verbose --scan-archive=yes _packages/apio-verible-*.tgz
 
       - name: Create the Release and upload files
         uses: softprops/action-gh-release@v2.2.2
