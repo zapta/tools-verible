@@ -3,7 +3,9 @@
         "apio",
         "clamav",
         "clamscan",
+        "elif",
         "freshclam",
+        "sgpublic",
         "VERIBLE"
     ]
 }
