@@ -206,7 +206,7 @@ def main():
     print(f"\nDeleting upstream dir {verible_root}")
     shutil.rmtree(verible_root)
 
-    # Write updated build info to the package
+    # -- Write updated build info to the package
     print("Writing package build info.")
     output_json_file = package_dir / "BUILD-INFO.json"
     with output_json_file.open("w", encoding="utf-8") as f:
@@ -214,8 +214,10 @@ def main():
         f.write("\n")  # Ensure the file ends with a newline
     run(["cat", "-n", output_json_file])
 
-    # Format the json file in the package dir
+    # -- Format the json file in the package dir
     print("Formatting package build info.")
+    # -- This tool is installed by the workflow as part of the
+    # -- format-json-file action.
     run(["json-align", "--in-place", "--spaces", "2", output_json_file])
     run(["cat", "-n", output_json_file])
 
