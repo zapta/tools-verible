@@ -65,11 +65,17 @@ jobs:
       #     sudo systemctl stop clamav-freshclam || true
       #     sudo freshclam --verbose
 
-      - name: Determine last commit
-        run: |
-          commit=$(git rev-parse HEAD)
-          echo $commit
-          echo "RELEASE_COMMIT=$commit" >> $GITHUB_ENV
+      # - name: Determine last commit
+      #   run: |
+      #     commit=$(git rev-parse HEAD)
+      #     echo $commit
+      #     echo "RELEASE_COMMIT=$commit" >> $GITHUB_ENV
+
+      - name: Get repository commit
+        uses: fpgawars/apio-workflows/.github/actions/get-repository-commit@main
+        with:
+          repo-dir: .
+          env-var-name: RELEASE_COMMIT
 
       - name: Create the build-info.json file
         run: |
@@ -98,7 +104,7 @@ jobs:
       #     cat -n build-info.json
 
       - name: Format build info json file in-place
-        uses: fpgawars/apio-workflows/.github/actions/format-json-file@main 
+        uses: fpgawars/apio-workflows/.github/actions/format-json-file@main
         with:
           json-file: build-info.json
 
