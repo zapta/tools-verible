@@ -35,9 +35,11 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4
 
-      - name: Set release and package tags
-        id: tags
-        uses: fpgawars/apio-workflows/.github/actions/set-release-and-package-tags@main
+      - name: Get release and package tags
+        uses: fpgawars/apio-workflows/.github/actions/get-release-and-package-tags@main
+        with:
+          release-tag-var: RELEASE_TAG
+          package-tag-var: PACKAGE_TAG
 
       # # E.g. "2025-11-02"
       # - name: Determine release tag
