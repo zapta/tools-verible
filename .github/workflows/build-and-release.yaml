@@ -91,11 +91,16 @@ jobs:
           cat -n build-info.json
 
       # This tool is used also by build.py
-      - name: Format build info
-        run: |
-          npm install -g json-align
-          json-align --in-place --spaces 2 build-info.json
-          cat -n build-info.json
+      # - name: Format build info
+      #   run: |
+      #     npm install -g json-align
+      #     json-align --in-place --spaces 2 build-info.json
+      #     cat -n build-info.json
+
+      - name: Format build info json file in-place
+        uses: fpgawars/apio-workflows/.github/actions/format-json-file@main 
+        with:
+          json-file: build-info.json
 
       - name: Make the build info file read only
         run: |
