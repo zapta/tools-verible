@@ -35,19 +35,23 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4
 
-      # E.g. "2025-11-02"
-      - name: Determine release tag
-        run: |
-          release_tag="$(date +'%Y-%m-%d')"
-          echo $release_tag
-          echo "RELEASE_TAG=$release_tag" >> $GITHUB_ENV
+      - name: Set release and package tags
+        id: tags
+        uses: fpgawars/apio-workflows/.github/actions/set-release-and-package-tags@main
 
-      # E.g. "20251102"
-      - name: Determine package tag
-        run: |
-          package_tag="${RELEASE_TAG//-/}"
-          echo $package_tag
-          echo "PACKAGE_TAG=$package_tag" >> $GITHUB_ENV
+      # # E.g. "2025-11-02"
+      # - name: Determine release tag
+      #   run: |
+      #     release_tag="$(date +'%Y-%m-%d')"
+      #     echo $release_tag
+      #     echo "RELEASE_TAG=$release_tag" >> $GITHUB_ENV
+
+      # # E.g. "20251102"
+      # - name: Determine package tag
+      #   run: |
+      #     package_tag="${RELEASE_TAG//-/}"
+      #     echo $package_tag
+      #     echo "PACKAGE_TAG=$package_tag" >> $GITHUB_ENV
 
       - name: Ensure no conflicting release
         uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
