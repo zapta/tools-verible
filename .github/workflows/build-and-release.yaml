@@ -58,12 +58,12 @@ jobs:
         with:
           release-tag: ${{ env.RELEASE_TAG }}
 
-      - name: Install anti virus (ClamAV)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clamav clamav-daemon
-          sudo systemctl stop clamav-freshclam || true
-          sudo freshclam --verbose
+      # - name: Install anti virus (ClamAV)
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y clamav clamav-daemon
+      #     sudo systemctl stop clamav-freshclam || true
+      #     sudo freshclam --verbose
 
       - name: Determine last commit
         run: |
@@ -148,26 +148,35 @@ jobs:
 
           cat -n $out
 
-      # Delete old pre-releases, keeps all releases.
-      - name: Delete old pre-releases
-        uses: sgpublic/delete-release-action@v1.2
-        with:
-          # Keep all stable releases .
-          release-drop: false
-          # Delete old pre-releases, keep the newest 10 (excluding the absolute latest)
-          pre-release-drop: true
-          pre-release-keep-count: 5
-          pre-release-drop-tag: true # Also delete tags of deleted pre-releases
-          # Keep all drafts.
-          draft-drop: false
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      - name: Cleanup old pre-releases
+        uses: fpgawars/apio-workflows/.github/actions/cleanup-old-prereleases@main
 
-      # Scans recursively inside the .tgz packages.
-      # See https://linux.die.net/man/1/clamscan
-      - name: Scan the packages for viruses
-        run: |
-          clamscan -r --verbose --scan-archive=yes _packages/apio-verible-*.tgz
+      # # Delete old pre-releases, keeps all releases.
+      # - name: Delete old pre-releases
+      #   uses: sgpublic/delete-release-action@v1.2
+      #   with:
+      #     # Keep all stable releases .
+      #     release-drop: false
+      #     # Delete old pre-releases, keep the newest 10 (excluding the absolute latest)
+      #     pre-release-drop: true
+      #     pre-release-keep-count: 5
+      #     pre-release-drop-tag: true # Also delete tags of deleted pre-releases
+      #     # Keep all drafts.
+      #     draft-drop: false
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+
+      # # Scans recursively inside the .tgz packages.
+      # # See https://linux.die.net/man/1/clamscan
+      # - name: Scan the packages for viruses
+      #   run: |
+      #     clamscan -r --verbose --scan-archive=yes _packages/apio-verible-*.tgz
+
+      - name: Scan files for viruses
+        uses: fpgawars/apio-workflows/.github/actions/scan-files-for-viruses@main
+        with:
+          file-patterns: |
+            _packages/apio-verible-*.tgz
 
       - name: Create the Release and upload files
         uses: softprops/action-gh-release@v2.2.2
