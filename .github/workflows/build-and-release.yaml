@@ -41,37 +41,10 @@ jobs:
           release-tag-var: RELEASE_TAG
           package-tag-var: PACKAGE_TAG
 
-      # # E.g. "2025-11-02"
-      # - name: Determine release tag
-      #   run: |
-      #     release_tag="$(date +'%Y-%m-%d')"
-      #     echo $release_tag
-      #     echo "RELEASE_TAG=$release_tag" >> $GITHUB_ENV
-
-      # # E.g. "20251102"
-      # - name: Determine package tag
-      #   run: |
-      #     package_tag="${RELEASE_TAG//-/}"
-      #     echo $package_tag
-      #     echo "PACKAGE_TAG=$package_tag" >> $GITHUB_ENV
-
       - name: Ensure no conflicting release
         uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
         with:
           release-tag: ${{ env.RELEASE_TAG }}
-
-      # - name: Install anti virus (ClamAV)
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y clamav clamav-daemon
-      #     sudo systemctl stop clamav-freshclam || true
-      #     sudo freshclam --verbose
-
-      # - name: Determine last commit
-      #   run: |
-      #     commit=$(git rev-parse HEAD)
-      #     echo $commit
-      #     echo "RELEASE_COMMIT=$commit" >> $GITHUB_ENV
 
       - name: Get repository commit
         uses: fpgawars/apio-workflows/.github/actions/get-repository-commit@main
@@ -97,13 +70,6 @@ jobs:
           EOF
 
           cat -n build-info.json
-
-      # This tool is used also by build.py
-      # - name: Format build info
-      #   run: |
-      #     npm install -g json-align
-      #     json-align --in-place --spaces 2 build-info.json
-      #     cat -n build-info.json
 
       - name: Format build info json file in-place
         uses: fpgawars/apio-workflows/.github/actions/format-json-file@main
@@ -163,27 +129,6 @@ jobs:
 
       - name: Cleanup old pre-releases
         uses: fpgawars/apio-workflows/.github/actions/cleanup-old-prereleases@main
-
-      # # Delete old pre-releases, keeps all releases.
-      # - name: Delete old pre-releases
-      #   uses: sgpublic/delete-release-action@v1.2
-      #   with:
-      #     # Keep all stable releases .
-      #     release-drop: false
-      #     # Delete old pre-releases, keep the newest 10 (excluding the absolute latest)
-      #     pre-release-drop: true
-      #     pre-release-keep-count: 5
-      #     pre-release-drop-tag: true # Also delete tags of deleted pre-releases
-      #     # Keep all drafts.
-      #     draft-drop: false
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
-
-      # # Scans recursively inside the .tgz packages.
-      # # See https://linux.die.net/man/1/clamscan
-      # - name: Scan the packages for viruses
-      #   run: |
-      #     clamscan -r --verbose --scan-archive=yes _packages/apio-verible-*.tgz
 
       - name: Scan the package for viruses
         uses: fpgawars/apio-workflows/.github/actions/scan-files-for-viruses@main
