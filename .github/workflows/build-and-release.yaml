@@ -47,7 +47,7 @@ jobs:
           release-tag: ${{ env.RELEASE_TAG }}
 
       - name: Get repository commit
-        uses: fpgawars/apio-workflows/.github/actions/get-repository-commit@main
+        uses: fpgawars/apio-workflows/.github/actions/get-repo-commit@main
         with:
           repo-dir: .
           env-var-name: RELEASE_COMMIT
