@@ -45,6 +45,11 @@ jobs:
           echo $package_tag
           echo "PACKAGE_TAG=$package_tag" >> $GITHUB_ENV
 
+      - name: Ensure no conflicting release
+        uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
+        with:
+          release-tag: ${{ env.RELEASE_TAG }}
+
       # Check out the this repo in the workflow work directory.
       - name: Checkout this repo
         uses: actions/checkout@v4
@@ -159,32 +164,6 @@ jobs:
       - name: Scan the packages for viruses
         run: |
           clamscan -r --verbose --scan-archive=yes _packages/apio-verible-*.tgz
-
-      - name: Ensure no conflicting release
-        uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
-        with:
-          release-tag: ${{ env.RELEASE_TAG }}
-
-      # - name: Delete same tag pre-release if exist.
-      #   run: |
-      #     set -e
-      #     gh release list --limit 100
-      #     output=$(gh release view "$RELEASE_TAG" --json name,tagName,isDraft,isImmutable,isPrerelease 2>&1 || true)
-      #     echo $output
-      #     if [[ "$output" == "release not found" ]]; then
-      #       echo "Release $RELEASE_TAG does not exist, safe to continue."
-      #     elif [[ "$(echo "$output" | jq -r '.isPrerelease')" == "true" ]]; then
-      #       echo "Release $RELEASE_TAG exists and is a pre-release, deleting."
-      #       gh release delete "$RELEASE_TAG" --yes --cleanup-tag
-      #     elif [[ "$(echo "$output" | jq -r '.isPrerelease')" == "false" ]]; then
-      #       echo "Error: A stable release (non pre-release) already exists for tag $RELEASE_TAG."
-      #       exit 1
-      #     else
-      #       echo "Error determining if release $RELEASE_TAG exists"
-      #       exit 1
-      #     fi
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
 
       - name: Create the Release and upload files
         uses: softprops/action-gh-release@v2.2.2
