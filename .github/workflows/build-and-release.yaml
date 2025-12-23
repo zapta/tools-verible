@@ -31,6 +31,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      # Check out the this repo in the workflow work directory.
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
       # E.g. "2025-11-02"
       - name: Determine release tag
         run: |
@@ -49,10 +53,6 @@ jobs:
         uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
         with:
           release-tag: ${{ env.RELEASE_TAG }}
-
-      # Check out the this repo in the workflow work directory.
-      - name: Checkout this repo
-        uses: actions/checkout@v4
 
       - name: Install anti virus (ClamAV)
         run: |
