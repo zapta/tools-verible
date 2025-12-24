@@ -126,7 +126,7 @@ jobs:
           \`\`\`
           EOF
 
-          cat -n $out
+          cat -n RELEASE_BODY.txt
 
       - name: Scan the package for viruses
         uses: fpgawars/apio-workflows/.github/actions/scan-files-for-viruses@main
