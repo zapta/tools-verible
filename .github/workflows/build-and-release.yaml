@@ -41,11 +41,6 @@ jobs:
           release-tag-var: RELEASE_TAG
           package-tag-var: PACKAGE_TAG
 
-      # - name: Ensure no conflicting release
-      #   uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
-      #   with:
-      #     release-tag: ${{ env.RELEASE_TAG }}
-
       - name: Get repository commit
         uses: fpgawars/apio-workflows/.github/actions/get-repo-commit@main
         with:
@@ -157,6 +152,11 @@ jobs:
       #       _packages/apio-verible-linux-x86-64-${{env.PACKAGE_TAG}}.tgz
       #       _packages/apio-verible-linux-aarch64-${{env.PACKAGE_TAG}}.tgz
       #       _packages/apio-verible-windows-amd64-${{env.PACKAGE_TAG}}.tgz
+
+      - name: Ensure no conflicting release
+        uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
+        with:
+          release-tag: ${{ env.RELEASE_TAG }}
 
       - name: Create GitHub pre-release
         uses: fpgawars/apio-workflows/.github/actions/create-pre-release@main
