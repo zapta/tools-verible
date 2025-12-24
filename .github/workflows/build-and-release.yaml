@@ -162,7 +162,7 @@ jobs:
         uses: fpgawars/apio-workflows/.github/actions/create-pre-release@main
         with:
           release_tag: ${{ env.RELEASE_TAG }}
-          body_path: RELEASE-BODY.txt
+          body_path: RELEASE_BODY.txt
           # We intensionally list explicitly all the expected files.
           files: |
             _packages/apio-verible-darwin-arm64-${{env.PACKAGE_TAG}}.tgz
