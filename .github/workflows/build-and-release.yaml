@@ -137,22 +137,6 @@ jobs:
       - name: Cleanup old pre-releases
         uses: fpgawars/apio-workflows/.github/actions/cleanup-old-prereleases@main
 
-      # - name: Create the Release and upload files
-      #   uses: softprops/action-gh-release@v2.2.2
-      #   with:
-      #     tag_name: ${{env.RELEASE_TAG}}
-      #     name: ${{env.RELEASE_TAG}}
-      #     body_path: RELEASE_BODY.txt
-      #     preserve_order: true
-      #     prerelease: true
-      #     fail_on_unmatched_files: true
-      #     files: |
-      #       _packages/apio-verible-darwin-arm64-${{env.PACKAGE_TAG}}.tgz
-      #       _packages/apio-verible-darwin-x86-64-${{env.PACKAGE_TAG}}.tgz
-      #       _packages/apio-verible-linux-x86-64-${{env.PACKAGE_TAG}}.tgz
-      #       _packages/apio-verible-linux-aarch64-${{env.PACKAGE_TAG}}.tgz
-      #       _packages/apio-verible-windows-amd64-${{env.PACKAGE_TAG}}.tgz
-
       - name: Ensure no conflicting release
         uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
         with:
