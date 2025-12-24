@@ -41,10 +41,10 @@ jobs:
           release-tag-var: RELEASE_TAG
           package-tag-var: PACKAGE_TAG
 
-      - name: Ensure no conflicting release
-        uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
-        with:
-          release-tag: ${{ env.RELEASE_TAG }}
+      # - name: Ensure no conflicting release
+      #   uses: fpgawars/apio-workflows/.github/actions/ensure-no-conflicting-release@main
+      #   with:
+      #     release-tag: ${{ env.RELEASE_TAG }}
 
       - name: Get repository commit
         uses: fpgawars/apio-workflows/.github/actions/get-repo-commit@main
@@ -114,6 +114,12 @@ jobs:
         run: |
           ls -al _packages/*
 
+      - name: Convert json build info to text
+        uses: fpgawars/apio-workflows/.github/actions/json-to-text@main
+        with:
+          input-json: build-info.json
+          output-text: build-info.txt
+
       - name: Prepare release text
         run: |
           cat  > RELEASE_BODY.txt <<EOF
@@ -121,14 +127,11 @@ jobs:
 
           Build info:
           \`\`\`
-          $(tr -d '",{}' < build-info.json)
+          $(cat build-info.txt)
           \`\`\`
           EOF
 
           cat -n $out
-
-      - name: Cleanup old pre-releases
-        uses: fpgawars/apio-workflows/.github/actions/cleanup-old-prereleases@main
 
       - name: Scan the package for viruses
         uses: fpgawars/apio-workflows/.github/actions/scan-files-for-viruses@main
@@ -136,15 +139,31 @@ jobs:
           file-patterns: |
             _packages/apio-verible-*.tgz
 
-      - name: Create the Release and upload files
-        uses: softprops/action-gh-release@v2.2.2
+      - name: Cleanup old pre-releases
+        uses: fpgawars/apio-workflows/.github/actions/cleanup-old-prereleases@main
+
+      # - name: Create the Release and upload files
+      #   uses: softprops/action-gh-release@v2.2.2
+      #   with:
+      #     tag_name: ${{env.RELEASE_TAG}}
+      #     name: ${{env.RELEASE_TAG}}
+      #     body_path: RELEASE_BODY.txt
+      #     preserve_order: true
+      #     prerelease: true
+      #     fail_on_unmatched_files: true
+      #     files: |
+      #       _packages/apio-verible-darwin-arm64-${{env.PACKAGE_TAG}}.tgz
+      #       _packages/apio-verible-darwin-x86-64-${{env.PACKAGE_TAG}}.tgz
+      #       _packages/apio-verible-linux-x86-64-${{env.PACKAGE_TAG}}.tgz
+      #       _packages/apio-verible-linux-aarch64-${{env.PACKAGE_TAG}}.tgz
+      #       _packages/apio-verible-windows-amd64-${{env.PACKAGE_TAG}}.tgz
+
+      - name: Create GitHub pre-release
+        uses: fpgawars/apio-workflows/.github/actions/create-pre-release@main
         with:
-          tag_name: ${{env.RELEASE_TAG}}
-          name: ${{env.RELEASE_TAG}}
-          body_path: RELEASE_BODY.txt
-          preserve_order: true
-          prerelease: true
-          fail_on_unmatched_files: true
+          release_tag: ${{ env.RELEASE_TAG }}
+          body_path: RELEASE-BODY.txt
+          # We intensionally list explicitly all the expected files.
           files: |
             _packages/apio-verible-darwin-arm64-${{env.PACKAGE_TAG}}.tgz
             _packages/apio-verible-darwin-x86-64-${{env.PACKAGE_TAG}}.tgz
