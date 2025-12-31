@@ -128,6 +128,8 @@ jobs:
           - [Release cutoff commit](https://github.com/${{ github.repository }}/commit/${RELEASE_COMMIT})
 
           - [Generated package pre-release](https://github.com/${{ github.repository }}/releases/tag/${RELEASE_TAG})
+
+          - [Included Verible release](https://github.com/chipsalliance/verible/releases/tag/${VERIBLE_RELEASE_TAG})
           EOF
 
           ls -al
