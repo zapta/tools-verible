@@ -59,20 +59,8 @@ def get_platform_info(platform_id: str, verible_release_tag: str) -> PlatformInf
             f"verible-{verible_release_tag}-macOS",
             ["tar", "zxf"],
         ),
-        "darwin-x86-64": PlatformInfo(
-            f"verible-{verible_release_tag}-macOS",
-            "tar.gz",
-            f"verible-{verible_release_tag}-macOS",
-            ["tar", "zxf"],
-        ),
         "linux-x86-64": PlatformInfo(
             f"verible-{verible_release_tag}-linux-static-x86_64",
-            "tar.gz",
-            f"verible-{verible_release_tag}",
-            ["tar", "zxf"],
-        ),
-        "linux-aarch64": PlatformInfo(
-            f"verible-{verible_release_tag}-linux-static-arm64",
             "tar.gz",
             f"verible-{verible_release_tag}",
             ["tar", "zxf"],
