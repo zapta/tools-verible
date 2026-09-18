@@ -41,16 +41,11 @@ jobs:
           release-tag-var: RELEASE_TAG
           package-tag-var: PACKAGE_TAG
 
-      # - name: Get repository commit
-      #   uses: fpgawars/apio-workflows/.github/actions/get-repo-commit@main
-      #   with:
-      #     repo-dir: .
-      #     env-var-name: RELEASE_COMMIT
-
       - name: Get repository commit
         uses: fpgawars/apio-workflows/.github/actions/get-repo-info@main
         with:
           repo-dir: .
+          repo-var: REPO
           commit-var: RELEASE_COMMIT
 
       - name: Create the build-info.json file
@@ -61,7 +56,7 @@ jobs:
             "description" : "Verible tools for Apio",
             "release-tag":  "$RELEASE_TAG",
             "verible-release-tag": "$VERIBLE_RELEASE_TAG",
-            "build-repo":  "${{github.repository}}",
+            "build-repo":  "$REPO",
             "build-workflow":  "${{ github.workflow }}",
             "workflow-run-id":  "${{github.run_id}}",
             "workflow-run-number": "${{github.run_number}}",
@@ -119,9 +114,9 @@ jobs:
           $(cat build-info.txt)
           \`\`\`
 
-          - [Cutoff commit](https://github.com/${{ github.repository }}/commit/${RELEASE_COMMIT})
+          - [Cutoff commit](https://github.com/${REPO}/commit/${RELEASE_COMMIT})
 
-          - [Generated pre-release](https://github.com/${{ github.repository }}/releases/tag/${RELEASE_TAG})
+          - [Generated pre-release](https://github.com/${REPO}/releases/tag/${RELEASE_TAG})
 
           - [Included Verible release](https://github.com/chipsalliance/verible/releases/tag/${VERIBLE_RELEASE_TAG})
           EOF
