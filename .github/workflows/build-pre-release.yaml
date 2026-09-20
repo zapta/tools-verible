@@ -18,7 +18,7 @@ permissions:
 env:
   # -- Set the version of the upstream release.
   # -- See list at https://github.com/chipsalliance/verible/releases
-  VERIBLE_RELEASE_TAG: "v0.0-3862-g936dfb1d"
+  VERIBLE_RELEASE_TAG: "v0.0-4294-gc1d8f5e8"
 
   # -- These are set later
   RELEASE_TAG: ""
