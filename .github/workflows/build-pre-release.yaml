@@ -116,9 +116,10 @@ jobs:
 
           - [Cutoff commit](https://github.com/${REPO}/commit/${RELEASE_COMMIT})
 
+          - [Included Verible release](https://github.com/chipsalliance/verible/releases/tag/${VERIBLE_RELEASE_TAG})
+
           - [Generated pre-release](https://github.com/${REPO}/releases/tag/${RELEASE_TAG})
 
-          - [Included Verible release](https://github.com/chipsalliance/verible/releases/tag/${VERIBLE_RELEASE_TAG})
           EOF
 
           ls -al
